@@ -9,8 +9,17 @@
 
 class Neuron {
 public:
+    /**
+     * Creates a new Neuron (a single NN unit)
+     * @param outputs The number of outputs this neuron has.  Must be == # neurons in the next layer (0 for output)
+     * @param idx The index of this neuron in the layer it exists within.
+     */
     Neuron(uint outputs, uint idx);
 
+    /**
+     * Sets the output of this neuron.
+     * @param output
+     */
     void setOutput(double output);
 
     double getOutput() const;
@@ -31,7 +40,7 @@ public:
 
 private:
     double output;
-    vector <Connection> outputWeights;
+    vector<Connection> outputWeights;
     uint idx;
     double gradient;
     constexpr static double learningRate = 0.15, momentumRate = 0.05;

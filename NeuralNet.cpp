@@ -31,6 +31,10 @@ NeuralNet::NeuralNet(const vector<uint> &topology) {
 }
 
 void NeuralNet::forwardProp(const vector<double> &input) {
+    if (input.size() != layers.front().size()) {
+        throw new length_error("Attempted forward propagation with an invalid number of input values.");
+    }
+
     for (uint i = 0; i < input.size(); i++) {
         layers[0][i].setOutput(input[i]);
     }
@@ -42,20 +46,22 @@ void NeuralNet::forwardProp(const vector<double> &input) {
     }
 }
 
-void NeuralNet::backProp(const vector<double> &output) {
+void NeuralNet::backProp(const vector<double> &target) {
+    if (target.size() != layers.back().size()) {
+        throw new length_error("Attempted back propagation with an invalid number of target values.");
+    }
+
     Layer &outLayer = layers.back();
     error = 0.0;
     for (uint i = 0; i < outLayer.size() - 1; i++) {
-        double delta = output.at(i) - outLayer[i].getOutput();
+        double delta = target.at(i) - outLayer[i].getOutput();
         error += delta * delta;
     }
     error /= outLayer.size() - 1;
     error = sqrt(error);
 
-    recentAvgError = (recentAvgError * recentSmoothingFactor + error) / (recentSmoothingFactor + 1);
-
     for (uint i = 0; i < outLayer.size() - 1; i++) {
-        outLayer[i].calcOutGradient(output.at(i));
+        outLayer[i].calcOutGradient(target.at(i));
     }
 
     for (uint i = layers.size() - 2; i > 0; i--) {
